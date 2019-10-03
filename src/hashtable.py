@@ -25,16 +25,6 @@ class HashTable:
         '''
         return hash(key)
 
-
-    def _hash_djb2(self, key):
-        '''
-        Hash an arbitrary key using DJB2 hash
-
-        OPTIONAL STRETCH: Research and implement DJB2
-        '''
-        pass
-
-
     def _hash_mod(self, key):
         '''
         Take an arbitrary key and return a valid integer index
@@ -48,11 +38,17 @@ class HashTable:
         Store the value with the given key.
 
         Hash collisions should be handled with Linked List Chaining.
-
-        Fill this in.
         '''
-        pass
+        if abs(len([item for item in self.storage if item]) - self.capacity) < 1:
+            self.resize()
 
+        index = self._hash_mod(key)
+
+        if not self.storage[index]:
+            self.storage[index] = LinkedPair(key, value)
+        else:
+            self.storage[index].next = LinkedPair(key, value)
+            print("warning: index collision")
 
 
     def remove(self, key):
@@ -60,9 +56,12 @@ class HashTable:
         Remove the value stored with the given key.
 
         Print a warning if the key is not found.
-
-        Fill this in.
         '''
+        index = self._hash_mod(key)
+        if not self.storage[index]:
+            print("warning: key to remove not found")
+        else:
+            self.storage[self._hash_mod(key)] = None
         pass
 
 
@@ -74,8 +73,11 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        val_pair = self.storage[self._hash_mod(key)]
+        if val_pair:
+            return val_pair.value
+        else:
+            return None
 
     def resize(self):
         '''
@@ -84,8 +86,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
 
+        for pair in [item for item in self.storage if item]:
+            new_index = self._hash_mod(pair.key)
+            new_storage[new_index] = pair
+
+        self.storage = new_storage
 
 
 if __name__ == "__main__":
@@ -101,6 +109,9 @@ if __name__ == "__main__":
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
+
+    # ht.remove('line_3')
+    # ht.remove("fish")
 
     # Test resizing
     old_capacity = len(ht.storage)

@@ -42,7 +42,7 @@ class DynamicArray:
         - subtract from count
         - return item
         """
-        value = self.storage[i]
+        value = self.storage[index]
 
         for i in range(index, self.count-1):
             self.storage[i] = self.storage[i+1]
